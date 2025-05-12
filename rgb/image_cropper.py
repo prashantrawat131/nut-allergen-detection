@@ -165,39 +165,27 @@ data = {
 
 
 transform_list = [
-    transforms.RandomHorizontalFlip(
-        p=1.0),               # 1. Flip horizontally
-    transforms.RandomVerticalFlip(p=1.0),                 # 2. Flip vertically
-    transforms.RandomRotation(degrees=45),                # 3. Rotate
-    # 4. Brightness adjustment
+    transforms.RandomHorizontalFlip(p=1.0),
+    transforms.RandomVerticalFlip(p=1.0),
+    transforms.RandomRotation(degrees=45),
     transforms.ColorJitter(brightness=0.5),
-    # 5. Contrast adjustment
     transforms.ColorJitter(contrast=0.5),
-    # 6. Random crop and resize
     transforms.RandomResizedCrop(size=(224, 224)),
-    transforms.RandomAffine(degrees=0, translate=(0.2, 0.2)),  # 7. Translation
-    # 8. Perspective distortion
+    transforms.RandomAffine(degrees=0, translate=(0.2, 0.2)),
     transforms.RandomPerspective(distortion_scale=0.5, p=1.0),
-    transforms.GaussianBlur(kernel_size=5)                # 9. Blur
+    transforms.GaussianBlur(kernel_size=5)
 ]
 
 
 def extract_roi(image_source_path, x, y, width, height):
     with Image.open(image_source_path) as img:
-        # crop box (left, upper, right, lower)
         crop_box = (x, y, x + width, y + height)
-
-        # crop the image
         cropped_img = img.crop(crop_box)
 
         if cropped_img.height > cropped_img.width:
             cropped_img = cropped_img.rotate(90, expand=True)
-
-        # resize image to (2800, 1400)
         cropped_img = cropped_img.resize((2800, 1400))
-
         return cropped_img
-
 
 if not os.path.exists("./rgb_cropped_images"):
     os.makedirs("./rgb_cropped_images")
@@ -210,8 +198,6 @@ for key, value in data.items():
     y = value["y"]
     width = value["width"]
     height = value["height"]
-    # if not os.path.exists(f"./rgb_cropped_images/{key}"):
-    #     os.makedirs(f"./rgb_cropped_images/{key}")
     image_number = 1
     image_sizes = [700, 512, 256]
     for i in range(start_index, end_index + 1):
@@ -225,8 +211,6 @@ for key, value in data.items():
                 right = left+700
                 lower = upper+700
                 cropped_img = cropped_image.crop((left, upper, right, lower))
-                # print(
-                #     f"left: {left}, upper: {upper}, right: {right}, lower: {lower}")
                 for l in range(len(image_sizes)):
                     x_padding = (700 - image_sizes[l]) // 2
                     y_padding = (700 - image_sizes[l]) // 2
