@@ -1,0 +1,6 @@
+numpy
+spectral
+matplotlib
+scipy
+scikit-learn
+joblib
